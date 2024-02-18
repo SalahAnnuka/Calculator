@@ -67,6 +67,15 @@ body{
 .num:active{
     background-color: rgb(218, 218, 218);
 }
+.dot{
+    background-color: rgb(241, 241, 241);
+}
+.dot:hover{
+    background-color: rgb(228, 228, 228);
+}
+.dot:active{
+    background-color: rgb(218, 218, 218);
+}
 .operator{
     background-color: rgb(218, 218, 218);
 }
