@@ -146,3 +146,33 @@ operators.forEach(operator => {
         }
     });
 });
+
+del.addEventListener('click', function() {
+    let content = ansbox.innerHTML.trim(); // Get the content of ansbox and trim any leading/trailing whitespace
+
+    // Remove the last character of ansbox
+    ansbox.innerHTML = content.slice(0, -1);
+
+    // Split ansbox content by operators and brackets
+    let elements = content.split(/(÷|×|\-|\+|\(|\))/).filter(e => e !== '');
+
+    // Check if the last element of the array has a dot, if not, set dotPlaced to false
+    if (elements.length > 0 && !elements[elements.length - 1].includes('.')) {
+        dotPlaced = false;
+    }
+
+    // If ansbox has one element or two elements with the first being '-', set ansbox content to '0'
+    if (elements.length === 1 || (elements.length === 2 && elements[0] === '-')) {
+        ansbox.innerHTML = '0';
+    }
+
+    // If the item deleted is an opening bracket, decrement remBracs
+    if (content.charAt(content.length - 1) === '(') {
+        remBracs--;
+    }
+
+    // If the item deleted is a closing bracket, increment remBracs
+    if (content.charAt(content.length - 1) === ')') {
+        remBracs++;
+    }
+});
