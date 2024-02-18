@@ -1,8 +1,12 @@
+
+
+
+
 let dotPlaced = false;
 let allowZeroAfterOperator = true;
 let remBracs = 0;
 
-const evaluate = document.getElementById('eval');
+const evalButton = document.getElementById('eval');
 const del = document.getElementById('del');
 const clear = document.getElementById('clear');
 const nums = document.querySelectorAll('.num');
@@ -197,173 +201,11 @@ del.addEventListener('click', function() {
     }
 });
 
-// Function to evaluate the expression in ansbox
-function evaluateExpression() {
-    // Retrieve the content of ansbox
-    let content = ansbox.innerHTML.trim();
-
-    // Replace all '×' with '*'
-    content = content.replace(/×/g, '*');
-
-    // Replace all '÷' with '/'
-    content = content.replace(/÷/g, '/');
-
-    // Convert the infix expression to postfix
-    let postfixExpression = infixToPostfix(content);
-
-    // Evaluate the postfix expression and return the result
-    return evaluatePostfix(postfixExpression);
-}
-
-// Function to convert infix expression to postfix
-function infixToPostfix(infix) {
-    let postfix = "";
-    let stack = [];
-    let precedence = {
-        '+': 1,
-        '-': 1,
-        '*': 2,
-        '/': 2
-    };
-
-    for (let i = 0; i < infix.length; i++) {
-        let token = infix[i];
-        if (!isNaN(parseInt(token)) || token === '.') {
-            postfix += token;
-        } else if (token === '(') {
-            stack.push(token);
-        } else if (token === ')') {
-            while (stack.length > 0 && stack[stack.length - 1] !== '(') {
-                postfix += stack.pop();
-            }
-            stack.pop();
-        } else {
-            while (stack.length > 0 && precedence[token] <= precedence[stack[stack.length - 1]]) {
-                postfix += stack.pop();
-            }
-            stack.push(token);
-        }
-    }
-
-    while (stack.length > 0) {
-        postfix += stack.pop();
-    }
-
-    return postfix;
-}
-
-// Function to evaluate postfix expression
-// Function to evaluate the expression in ansbox
-function evaluateExpression() {
-    // Retrieve the content of ansbox
-    let content = ansbox.innerHTML.trim();
-
-    // Replace all '×' with '*'
-    content = content.replace(/×/g, '*');
-
-    // Replace all '÷' with '/'
-    content = content.replace(/÷/g, '/');
-
-    // Convert the infix expression to postfix
-    let postfixExpression = infixToPostfix(content);
-    console.log("Postfix Expression:", postfixExpression);
-
-    // Evaluate the postfix expression and return the result
-    return evaluatePostfix(postfixExpression);
-}
-
-// Function to convert infix expression to postfix
-function infixToPostfix(infix) {
-    let postfix = "";
-    let stack = [];
-    let precedence = {
-        '+': 1,
-        '-': 1,
-        '*': 2,
-        '/': 2
-    };
-
-    for (let i = 0; i < infix.length; i++) {
-        let token = infix[i];
-        if (!isNaN(parseInt(token)) || token === '.') {
-            postfix += token;
-        } else if (token === '(') {
-            stack.push(token);
-        } else if (token === ')') {
-            while (stack.length > 0 && stack[stack.length - 1] !== '(') {
-                postfix += stack.pop();
-            }
-            stack.pop();
-        } else {
-            while (stack.length > 0 && precedence[token] <= precedence[stack[stack.length - 1]]) {
-                postfix += stack.pop();
-            }
-            stack.push(token);
-        }
-    }
-
-    while (stack.length > 0) {
-        postfix += stack.pop();
-    }
-
-    return postfix;
-}
-
-function evaluatePostfix(expression) {
-    const stack = [];
-
-    // Iterate through each character in the expression
-    for (let i = 0; i < expression.length; i++) {
-        const char = expression[i];
-
-        // If character is a digit or decimal point, push it to the stack
-        if (!isNaN(parseFloat(char)) || char === '.') {
-            let operand = char;
-
-            // Collect the entire operand (including decimals)
-            while (!isNaN(parseFloat(expression[i + 1])) || expression[i + 1] === '.') {
-                operand += expression[++i];
-            }
-
-            // Push the operand onto the stack after converting it to a number
-            stack.push(parseFloat(operand));
-        }
-        // If character is an operator
-        else if (isOperator(char)) {
-            // Pop the last two operands from the stack
-            const operand2 = stack.pop();
-            const operand1 = stack.pop();
-
-            // Perform the operation and push the result back onto the stack
-            switch (char) {
-                case '+':
-                    stack.push(operand1 + operand2);
-                    break;
-                case '-':
-                    stack.push(operand1 - operand2);
-                    break;
-                case '*':
-                    stack.push(operand1 * operand2);
-                    break;
-                case '/':
-                    stack.push(operand1 / operand2);
-                    break;
-            }
-        }
-    }
-
-    // The result will be the only element left in the stack
-    return stack[0];
-}
 
 
-
-
-
-
-evaluate.addEventListener('click', function() {
+evalButton.addEventListener('click', function() {
     // Evaluate the expression and get the result
-    let result = evaluateExpression();
+    let result = MathJS.evaluate(ansbox.innerHTML);
     console.log(result);
 
     // Display the result in the ansbox
