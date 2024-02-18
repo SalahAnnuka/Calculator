@@ -75,10 +75,10 @@ operators.forEach(operator => {
                 break;
             case '×':
                 switch (ansbox.innerHTML.charAt(ansbox.innerHTML.length - 1)){
-                    case '+': break;
-                    case '-': break;
-                    case '÷': break;
-                    case '×': break;
+                    case '+': 
+                    case '-': 
+                    case '÷': 
+                    case '×': 
                     case '(': break;
                     default: ansbox.innerHTML += operator.innerHTML; break;
                 }
