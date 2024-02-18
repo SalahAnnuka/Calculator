@@ -1,7 +1,6 @@
 let dotPlaced = false;
 let ans = "";
 let optemp = "";
-let rembracs = 0;
 
 const eval = document.getElementById('eval');
 const del = document.getElementById('del');
@@ -9,7 +8,6 @@ const clear = document.getElementById('clear');
 const nums = document.querySelectorAll('.num');
 const ansbox = document.querySelector('.ansbox');
 const operators = document.querySelectorAll('.operator');
-const brackets = document.querySelectorAll('.bracket');
 
 nums.forEach(num => {
     num.addEventListener('click', function() { 
@@ -143,4 +141,6 @@ brackets.forEach(bracket => {
 
 
 
-
+function isNumber(input) {
+    return !isNaN(parseFloat(input)) && isFinite(input);
+}
