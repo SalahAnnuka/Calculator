@@ -150,29 +150,222 @@ operators.forEach(operator => {
 del.addEventListener('click', function() {
     let content = ansbox.innerHTML.trim(); // Get the content of ansbox and trim any leading/trailing whitespace
 
-    // Remove the last character of ansbox
-    ansbox.innerHTML = content.slice(0, -1);
+    // Check if ansbox is not empty
+    if (content.length > 0) {
+        // Split ansbox content by operators and brackets
+        let elements = content.split(/(÷|×|\-|\+|\(|\))/).filter(e => e !== '');
 
-    // Split ansbox content by operators and brackets
-    let elements = content.split(/(÷|×|\-|\+|\(|\))/).filter(e => e !== '');
+        // Check if the trimmed content contains any operators or brackets
+        if (content.match(/[÷×\-+\(\)]/)) {
+            // If the item to be removed is an opening bracket, decrement remBracs
+            if (content.charAt(content.length - 1) === '(') {
+                remBracs--;
+            }
 
-    // Check if the last element of the array has a dot, if not, set dotPlaced to false
-    if (elements.length > 0 && !elements[elements.length - 1].includes('.')) {
-        dotPlaced = false;
+            // If the item to be removed is a closing bracket, increment remBracs
+            if (content.charAt(content.length - 1) === ')') {
+                remBracs++;
+            }
+
+            // Check if the last element of the array has a dot, if not, set dotPlaced to false
+            if (elements.length > 0 && !elements[elements.length - 1].includes('.')) {
+                dotPlaced = false;
+            }
+
+            // If ansbox has one element or two elements with the first being '-', set ansbox content to '0'
+            if (elements.length === 1 || (elements.length === 2 && elements[0] === '-')) {
+                ansbox.innerHTML = '0';
+            } else {
+                // If ansbox is not empty, remove the last character
+                ansbox.innerHTML = content.slice(0, -1);
+            }
+        } else {
+            // If the trimmed content doesn't contain any operators or brackets
+            if (content.length === 1 && isNaN(parseInt(content))) {
+                // If the content is a single character and not a number, set ansbox content to '0'
+                ansbox.innerHTML = '0';
+            } else {
+                // If ansbox is not empty and contains numbers, remove the last character
+                ansbox.innerHTML = content.slice(0, -1);
+            }
+        }
+
+        // Check if the last character removed was a dot, if so, reset dotPlaced to false
+        if (content.charAt(content.length - 1) === '.') {
+            dotPlaced = false;
+        }
+    }
+});
+
+// Function to evaluate the expression in ansbox
+function evaluateExpression() {
+    // Retrieve the content of ansbox
+    let content = ansbox.innerHTML.trim();
+
+    // Replace all '×' with '*'
+    content = content.replace(/×/g, '*');
+
+    // Replace all '÷' with '/'
+    content = content.replace(/÷/g, '/');
+
+    // Convert the infix expression to postfix
+    let postfixExpression = infixToPostfix(content);
+
+    // Evaluate the postfix expression and return the result
+    return evaluatePostfix(postfixExpression);
+}
+
+// Function to convert infix expression to postfix
+function infixToPostfix(infix) {
+    let postfix = "";
+    let stack = [];
+    let precedence = {
+        '+': 1,
+        '-': 1,
+        '*': 2,
+        '/': 2
+    };
+
+    for (let i = 0; i < infix.length; i++) {
+        let token = infix[i];
+        if (!isNaN(parseInt(token)) || token === '.') {
+            postfix += token;
+        } else if (token === '(') {
+            stack.push(token);
+        } else if (token === ')') {
+            while (stack.length > 0 && stack[stack.length - 1] !== '(') {
+                postfix += stack.pop();
+            }
+            stack.pop();
+        } else {
+            while (stack.length > 0 && precedence[token] <= precedence[stack[stack.length - 1]]) {
+                postfix += stack.pop();
+            }
+            stack.push(token);
+        }
     }
 
-    // If ansbox has one element or two elements with the first being '-', set ansbox content to '0'
-    if (elements.length === 1 || (elements.length === 2 && elements[0] === '-')) {
-        ansbox.innerHTML = '0';
+    while (stack.length > 0) {
+        postfix += stack.pop();
     }
 
-    // If the item deleted is an opening bracket, decrement remBracs
-    if (content.charAt(content.length - 1) === '(') {
-        remBracs--;
+    return postfix;
+}
+
+// Function to evaluate postfix expression
+// Function to evaluate the expression in ansbox
+function evaluateExpression() {
+    // Retrieve the content of ansbox
+    let content = ansbox.innerHTML.trim();
+
+    // Replace all '×' with '*'
+    content = content.replace(/×/g, '*');
+
+    // Replace all '÷' with '/'
+    content = content.replace(/÷/g, '/');
+
+    // Convert the infix expression to postfix
+    let postfixExpression = infixToPostfix(content);
+    console.log("Postfix Expression:", postfixExpression);
+
+    // Evaluate the postfix expression and return the result
+    return evaluatePostfix(postfixExpression);
+}
+
+// Function to convert infix expression to postfix
+function infixToPostfix(infix) {
+    let postfix = "";
+    let stack = [];
+    let precedence = {
+        '+': 1,
+        '-': 1,
+        '*': 2,
+        '/': 2
+    };
+
+    for (let i = 0; i < infix.length; i++) {
+        let token = infix[i];
+        if (!isNaN(parseInt(token)) || token === '.') {
+            postfix += token;
+        } else if (token === '(') {
+            stack.push(token);
+        } else if (token === ')') {
+            while (stack.length > 0 && stack[stack.length - 1] !== '(') {
+                postfix += stack.pop();
+            }
+            stack.pop();
+        } else {
+            while (stack.length > 0 && precedence[token] <= precedence[stack[stack.length - 1]]) {
+                postfix += stack.pop();
+            }
+            stack.push(token);
+        }
     }
 
-    // If the item deleted is a closing bracket, increment remBracs
-    if (content.charAt(content.length - 1) === ')') {
-        remBracs++;
+    while (stack.length > 0) {
+        postfix += stack.pop();
     }
+
+    return postfix;
+}
+
+function evaluatePostfix(expression) {
+    const stack = [];
+
+    // Iterate through each character in the expression
+    for (let i = 0; i < expression.length; i++) {
+        const char = expression[i];
+
+        // If character is a digit or decimal point, push it to the stack
+        if (!isNaN(parseFloat(char)) || char === '.') {
+            let operand = char;
+
+            // Collect the entire operand (including decimals)
+            while (!isNaN(parseFloat(expression[i + 1])) || expression[i + 1] === '.') {
+                operand += expression[++i];
+            }
+
+            // Push the operand onto the stack after converting it to a number
+            stack.push(parseFloat(operand));
+        }
+        // If character is an operator
+        else if (isOperator(char)) {
+            // Pop the last two operands from the stack
+            const operand2 = stack.pop();
+            const operand1 = stack.pop();
+
+            // Perform the operation and push the result back onto the stack
+            switch (char) {
+                case '+':
+                    stack.push(operand1 + operand2);
+                    break;
+                case '-':
+                    stack.push(operand1 - operand2);
+                    break;
+                case '*':
+                    stack.push(operand1 * operand2);
+                    break;
+                case '/':
+                    stack.push(operand1 / operand2);
+                    break;
+            }
+        }
+    }
+
+    // The result will be the only element left in the stack
+    return stack[0];
+}
+
+
+
+
+
+
+evaluate.addEventListener('click', function() {
+    // Evaluate the expression and get the result
+    let result = evaluateExpression();
+    console.log(result);
+
+    // Display the result in the ansbox
+    ansbox.innerHTML = result.toString();
 });
