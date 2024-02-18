@@ -1,6 +1,7 @@
 let dotPlaced = false;
 let ans = "";
 let optemp = "";
+let rembracs = 0;
 
 const eval = document.getElementById('eval');
 const del = document.getElementById('del');
@@ -8,6 +9,7 @@ const clear = document.getElementById('clear');
 const nums = document.querySelectorAll('.num');
 const ansbox = document.querySelector('.ansbox');
 const operators = document.querySelectorAll('.operator');
+const brackets = document.querySelectorAll('.bracket');
 
 nums.forEach(num => {
     num.addEventListener('click', function() { 
@@ -40,10 +42,50 @@ clear.addEventListener('click', function(){
 
 operators.forEach(operator => {
     operator.addEventListener('click', function(){
-        ans = ansbox.innerHTML;
-        ansbox.innerHTML = '0';
-
-        optemp = operator.innerHTML;
+        switch (operator.innerHTML){
+            case '+':
+                switch (ansbox.innerHTML.charAt(ansbox.innerHTML.length - 1)){
+                    case '+': break;
+                    case '-': break;
+                    case '÷': break;
+                    case '×': break;
+                    case '(': break;
+                    default: ansbox.innerHTML += operator.innerHTML; break;
+                }
+                break;
+            case '-':
+                switch (ansbox.innerHTML.charAt(ansbox.innerHTML.length - 1)){
+                    case '+': ansbox.innerHTML.slice(0,-1); ansbox.innerHTML += operator.innerHTML; break;
+                    case '-': break;
+                    case '÷': ansbox.innerHTML += operator.innerHTML; break;
+                    case '×': ansbox.innerHTML += operator.innerHTML; break;
+                    case '(': ansbox.innerHTML += operator.innerHTML; break;
+                    default: ansbox.innerHTML += operator.innerHTML; break;
+                }
+                break;
+            case '÷':
+                switch (ansbox.innerHTML.charAt(ansbox.innerHTML.length - 1)){
+                    case '+': break;
+                    case '-': break;
+                    case '÷': break;
+                    case '×': break;
+                    case '(': break;
+                    default: ansbox.innerHTML += operator.innerHTML; break;
+                }
+                break;
+            case '×':
+                switch (ansbox.innerHTML.charAt(ansbox.innerHTML.length - 1)){
+                    case '+': break;
+                    case '-': break;
+                    case '÷': break;
+                    case '×': break;
+                    case '(': break;
+                    default: ansbox.innerHTML += operator.innerHTML; break;
+                }
+                break;
+            default:
+                break;
+        }
     });
 });
 
@@ -65,3 +107,40 @@ eval.addEventListener('click', function(){
             break;
     }
 });
+
+brackets.forEach(bracket => {
+    bracket.addEventListener('click', function(){
+        switch (bracket.innerHTML){
+            case '(':
+                switch (ansbox.innerHTML.charAt(ansbox.innerHTML.length - 1)){
+                    default: 
+                        ansbox.innerHTML += bracket.innerHTML; 
+                        rembracs++; 
+                        break;
+                }
+                break;
+            case ')':
+                if (rembracs > 0) {
+                    switch (ansbox.innerHTML.charAt(ansbox.innerHTML.length - 1)){
+                        case '+': 
+                        case '-': 
+                        case '÷': 
+                        case '×': 
+                        case '(': 
+                            break;
+                        default: 
+                            ansbox.innerHTML += bracket.innerHTML; 
+                            rembracs--; 
+                            break;
+                    }
+                }
+                break;
+            default: 
+                break;
+        }
+    });
+});
+
+
+
+
